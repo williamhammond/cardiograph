@@ -2,6 +2,7 @@ package cardiograph
 
 import rl "vendor:raylib"
 import imgui "vendor/odin-imgui"
+import rl_imgui "vendor/raylib-imgui"
 
 main :: proc() {
     rl.InitWindow(1280, 720, "Cardiograph")
@@ -22,16 +23,16 @@ main :: proc() {
     imgui.CreateContext(nil)
 	defer imgui.DestroyContext(nil)
 
-    init()
-    defer shutdown()
-    build_font_atlas()
+    rl_imgui.init()
+    defer rl_imgui.shutdown()
+    rl_imgui.build_font_atlas()
 
     for !rl.WindowShouldClose() {
         // Simulate
         rl.UpdateCamera(&camera, camera_mode)
 
-		process_events()
-        new_frame()
+		rl_imgui.process_events()
+        rl_imgui.new_frame()
 		imgui.NewFrame()
 
         rl.BeginDrawing()
@@ -51,6 +52,6 @@ main :: proc() {
 
         imgui.ShowDemoWindow(nil)
         imgui.Render()
-		render_draw_data(imgui.GetDrawData())
+		rl_imgui.render_draw_data(imgui.GetDrawData())
     }
 }
