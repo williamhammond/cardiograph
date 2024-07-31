@@ -1,8 +1,8 @@
 package cardiograph
 
 import rl "vendor:raylib"
-import imgui "vendor/odin-imgui"
-import rl_imgui "vendor/raylib-imgui"
+import imgui "../vendor/odin-imgui"
+import rl_imgui "../vendor/raylib-imgui"
 
 main :: proc() {
     rl.InitWindow(1280, 720, "Cardiograph")
@@ -30,28 +30,31 @@ main :: proc() {
     for !rl.WindowShouldClose() {
         // Simulate
         rl.UpdateCamera(&camera, camera_mode)
-
-		rl_imgui.process_events()
-        rl_imgui.new_frame()
-		imgui.NewFrame()
-
-        rl.BeginDrawing()
-        defer rl.EndDrawing()
-
-        // Render
-        rl.ClearBackground(rl.RAYWHITE)
-        {
-            rl.BeginMode3D(camera)
-            defer rl.EndMode3D()
-            rl.DrawCube(rl.Vector3{0, 1, 0}, 6, 6, 6, rl.RED)
-        }
-
-        // Debug
-        rl.DrawFPS(10, rl.GetScreenHeight() - 24)
-        rl.DrawText("Cardiograph", rl.GetScreenWidth() / 2, 10, 42, rl.WHITE)
-
-        imgui.ShowDemoWindow(nil)
-        imgui.Render()
-		rl_imgui.render_draw_data(imgui.GetDrawData())
+        render_update(&camera)
     }
+}
+
+render_update :: proc(camera: ^rl.Camera) {
+    rl_imgui.process_events()
+    rl_imgui.new_frame()
+    imgui.NewFrame()
+
+    rl.BeginDrawing()
+    defer rl.EndDrawing()
+
+    // Render
+    rl.ClearBackground(rl.RAYWHITE)
+    {
+        rl.BeginMode3D(camera^)
+        defer rl.EndMode3D()
+        rl.DrawCube(rl.Vector3{0, 1, 0}, 6, 6, 6, rl.RED)
+    }
+
+    // Debug
+    rl.DrawFPS(10, rl.GetScreenHeight() - 24)
+    rl.DrawText("Cardiograph", rl.GetScreenWidth() / 2, 10, 42, rl.WHITE)
+
+    imgui.ShowDemoWindow(nil)
+    imgui.Render()
+    rl_imgui.render_draw_data(imgui.GetDrawData())
 }
